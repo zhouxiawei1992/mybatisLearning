@@ -52,7 +52,7 @@ public class AutoGenTemplate {
         AutoGenTemplate autoGenTemplate = new AutoGenTemplate();
 
         Pattern pattern = Pattern.compile("(?<chromeOrEdgeAgent>(?:\\s{0,5}Mozilla/\\d{1,2}\\.\\d{1,2}\\s{0,5}\\([^)]+\\)\\s{0,5}AppleWebKit/\\d{2,4}\\.\\d{1,3}\\s{0,5}\\([^)]+\\)(?<ubantu>(?:\\s{0,5}Ubuntu/\\d{1,3}\\.\\d{1,3}\\s{0,3}Chromium/\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\.\\d{1,4})?)\\s{0,5}Chrome/\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\s{0,5}Safari/[\\d\\w.\\s/\\n]+))");
-        String sss = "10.1.0.105 - - [24/Jan/2016:22:21:28 +0800] \"GET / HTTP/1.1\" 304 0 \"-\" \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36\" \"-\"\n";
+        String sss = "10.1.0.105 - - 24/Jan/2016:22:21:28 +0800 \"GET / HTTP/1.1\" 304 0 \"-\" \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36\" \"-\"";
         String log = "10.1.0.105|24/Jan/2016:22:20:21 +0800|GET / HTTP/1.1|304|0|-|Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36|-|-|-|0.000|-";
         String log1 = "2010-07-30 01:06:43 192.168.0.102 - W3SVC1 MGL 192.168.0.102 80 GET /css/rss.xslt - 304 0 140 358 0 HTTP/1.1 192.168.0.102 Mozilla/4.0+(compatible;+MSIE+7.0;+Windows+NT+5.1;+Trident/4.0;+InfoPath.2;+360SE) ASPSESSIONIDACRRDABA=IDDHCBBBHBMBODAGCIDKAGLM -";
         String apaLog = "192.168.1.2 - - [02/Feb/2016:17:44:13 +0800] \"GET /favicon.ico HTTP/1.1\" 404 209 \"http://localhost/x1.html\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36\"";
@@ -60,9 +60,11 @@ public class AutoGenTemplate {
                 "aliyun.com/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36\"";
         String tomCatLog = "127.0.0.1 192.168.254.108 - -1 127.0.0.1 HTTP/1.1 - GET 80&<60; GET /rightmainima/leftbott4.swf HTTP/1.1 304 5563A67708646B6AA299C33D59BE132A [22/Sep/2007:10:08:52 +0800] - /rightmainima/leftbott4.swf localhost 0 0.000";
         String ll = "a $b $c $ d$e";
-        ArrayList<String> unparsedLogList = autoGenTemplate.getUnparsedLogList(ll);
+        String tmp = "Thu Jan 01 1970 00:00:00 GMT+0800";
+        ArrayList<String> unparsedLogList = autoGenTemplate.getUnparsedLogList(tmp);
         Map<String, String> patternMap = autoGenTemplate.createPatternMap("/Users/zhouxw/Documents/workspace/mybatisLearning/src/main/resources/WebPatterns");
         ArrayList<ArrayList<String>> arrayLists = autoGenTemplate.translate(unparsedLogList,patternMap);
+        ArrayList<String> arrayList = autoGenTemplate.translate(tmp,patternMap);
         System.out.println(arrayLists);
     }
 
@@ -197,26 +199,33 @@ public class AutoGenTemplate {
     public ArrayList<ArrayList<String>> translate(ArrayList<String> unparsedList, Map<String,String> patternMap) {
         ArrayList<ArrayList<String>> arrayLists = new ArrayList();
         for (String unparsedString : unparsedList) {
-            ArrayList<String> arrayList = new ArrayList<String>();
-            for (String pattern : patternMap.keySet()) {
-                GrokUtils grokUtils = new GrokUtils();
-                String search;
-                if (patternMap.get(pattern).contains("%{")) {
-                    search = patternMap.get(pattern);
-                }else {
-                    search = "%{" + pattern + "}";
-                }
-                Match match = GrokUtils.getMatch(search,unparsedString);
-                if (match != null && match.getMatch() != null && match.getMatch().matches()) {
-                    String resultStr = grokUtils.getGrok().getNamedRegex();
-                    resultStr = resultStr.replace("name0",pattern);
-                    System.out.println(resultStr);
-                    arrayList.add(resultStr);
-                }
-            }
-            arrayLists.add(arrayList);
+
+            arrayLists.add(translate(unparsedString,patternMap));
         }
         return arrayLists;
+    }
+
+    public ArrayList<String> translate(String log, Map<String,String> map) {
+        ArrayList<String> arrayList = new ArrayList<String>();
+        for (String pattern : map.keySet()) {
+            String resultStr = "";
+            GrokUtils grokUtils = new GrokUtils();
+            String search;
+            if (map.get(pattern).contains("%{")) {
+                search = map.get(pattern);
+            }else {
+                search = "%{" + pattern + "}";
+            }
+            Match match = GrokUtils.getMatch(search,log);
+            if (match != null && match.getMatch() != null && match.getMatch().matches()) {
+                resultStr = grokUtils.getGrok().getNamedRegex();
+                resultStr = "(?<xx>" + resultStr + ")";
+                resultStr = resultStr.replace("xx",pattern);
+                arrayList.add(resultStr);
+                System.out.println(resultStr);
+            }
+        }
+        return arrayList;
     }
 
 
