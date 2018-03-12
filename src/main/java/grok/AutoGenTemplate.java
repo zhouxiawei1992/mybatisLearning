@@ -60,8 +60,8 @@ public class AutoGenTemplate {
                 "aliyun.com/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36\"";
         String tomCatLog = "127.0.0.1 192.168.254.108 - -1 127.0.0.1 HTTP/1.1 - GET 80&<60; GET /rightmainima/leftbott4.swf HTTP/1.1 304 5563A67708646B6AA299C33D59BE132A [22/Sep/2007:10:08:52 +0800] - /rightmainima/leftbott4.swf localhost 0 0.000";
         String ll = "a $b $c $ d$e";
-        String tmp = "Thu Jan 01 1970 00:00:00 GMT+0800";
-        ArrayList<String> unparsedLogList = autoGenTemplate.getUnparsedLogList(tmp);
+        String tmp = "https://www.baidu.com/s?wd=%E5%8F%AF%E8%83%BD%E7%9A%84%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F&rsv_spt=1&rsv_iqid=0xd503fc06000500f3&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&rqlang=cn&tn=baiduhome_pg&rsv_enter=1&oq=%25E6%2597%25B6%25E5%2588%2586%25E7%25A7%2592%25E6%2597%25B6%25E9%2597%25B4%25E6%25A0%25BC%25E5%25BC%258F&rsv_t=4b79tpN5ab1PwFp5kdPLo%2B58cJeaFb5Gn6KT%2BGqxi%2FOwFlDzGSDiNapKJF5lf1KMvJ8h&rsv_pq=93cb9e7f0000b57e&inputT=9621&rsv_sug3=106&rsv_sug1=81&rsv_sug7=100&rsv_sug2=0&rsv_sug4=9621";
+        ArrayList<String> unparsedLogList = autoGenTemplate.getUnparsedLogList(log);
         Map<String, String> patternMap = autoGenTemplate.createPatternMap("/Users/zhouxw/Documents/workspace/mybatisLearning/src/main/resources/WebPatterns");
         ArrayList<ArrayList<String>> arrayLists = autoGenTemplate.translate(unparsedLogList,patternMap);
         ArrayList<String> arrayList = autoGenTemplate.translate(tmp,patternMap);
