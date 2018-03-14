@@ -2,7 +2,6 @@ package grok;
 
 
 
-import io.thekraken.grok.api.Match;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
@@ -26,7 +25,7 @@ public class AutoGenTemplate {
     private static final String GROK_PATTERN_PATH = "/Users/zhouxw/Documents/workspace/mybatisLearning/src/main/resources/WebPatterns";
     public static Map<String, String> originalPatternMap = new HashMap<String, String>();
     public static Map<String, String> trimedPatternMap = new HashMap<String, String>();
-
+    public static String spliter = " ";
     public void init() throws Exception{
         originalPatternMap = createPatternMap(GROK_PATTERN_PATH);
         trimOriginalPatternMap();
@@ -87,30 +86,43 @@ public class AutoGenTemplate {
         AutoGenTemplate autoGenTemplate = new AutoGenTemplate();
         autoGenTemplate.init();
         Pattern pattern = Pattern.compile("(?<chromeOrEdgeAgent>(?:\\s{0,5}Mozilla/\\d{1,2}\\.\\d{1,2}\\s{0,5}\\([^)]+\\)\\s{0,5}AppleWebKit/\\d{2,4}\\.\\d{1,3}\\s{0,5}\\([^)]+\\)(?<ubantu>(?:\\s{0,5}Ubuntu/\\d{1,3}\\.\\d{1,3}\\s{0,3}Chromium/\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\.\\d{1,4})?)\\s{0,5}Chrome/\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\s{0,5}Safari/[\\d\\w.\\s/\\n]+))");
-        String sss = "10.1.0.105 - - 24/Jan/2016:22:21:28 +0800 \"GET / HTTP/1.1\" 304 0 \"-\" \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36\" \"-\"";
+        String sss = "10.1.0.105 - - 24/Jan/2016:22:21:28 +0800 \"GET .xx#/ HgdTP/1.1\" 304 0 \"-\" \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36\" \"-\"";
         String log = "  10.1.0.105\t|24/Jan/2016:22:20:21 +0800|GET / HTTP/1.1|304|0|-|Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36|-|-|-|0.000|-";
-        String log1 = "2010-07-30 01:06:43 192.168.0.102 - W3SVC1 MGL 192.168.0.102 80 GET /css/rss.xslt - 304 0 140 358 0 HTTP/1.1 192.168.0.102 Mozilla/4.0+(compatible;+MSIE+7.0;+Windows+NT+5.1;+Trident/4.0;+InfoPath.2;+360SE) ASPSESSIONIDACRRDABA=IDDHCBBBHBMBODAGCIDKAGLM -";
-        String apaLog = "192.168.1.2 - - [02/Feb/2016:17:44:13 +0800] \"GET /favicon.ico HTTP/1.1\" 404 209 \"http://localhost/x1.html\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36\"";
+        String log1 = "20107-30 01:06:43 192.168.0.102 - W3SVC1 MGL 192.168.0.102 80 GET /css/rss.xslt - 304 0 140 358 0 HTTP/1.1 192.168.0.102 Mozilla/4.0+(compatible;+MSIE+7.0;+Windows+NT+5.1;+Trident/4.0;+InfoPath.2;+360SE) ASPSESSIONIDACRRDABA=IDDHCBBBHBMBODAGCIDKAGLM -";
+        String apaLog = "100 100 192.168.1.2 - - [02/Feb/2016:17:44:13 +0800] 100 \"GET /favicon.ico HTTP/1.1\" 404 209 1000 \"http://localhost/x1.html\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36\"";
         String nodeLog = "[2016-01-31 12:02:25.84] [INFO] access - 42.120.73.203 - - \"GET /user/projects/ali_sls_log?ignoreError=true HTTP/1.1\" 304 - \"http://\n" +
                 "aliyun.com/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36\"";
         String tomCatLog = "127.0.0.1 192.168.254.108 - -1 127.0.0.1 HTTP/1.1 - GET 80&<60; GET /rightmainima/leftbott4.swf HTTP/1.1 304 5563A67708646B6AA299C33D59BE132A [22/Sep/2007:10:08:52 +0800] - /rightmainima/leftbott4.swf localhost 0 0.000";
         String sub = "POST /api HTTP/1.1";
-        String ll = "2010-07-30";
         String tmp = "https://www.baidu.com/s?wd=%E5%8F%AF%E8%83%BD%E7%9A%84%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F&rsv_spt=1&rsv_iqid=0xd503fc06000500f3&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&rqlang=cn&tn=baiduhome_pg&rsv_enter=1&oq=%25E6%2597%25B6%25E5%2588%2586%25E7%25A7%2592%25E6%2597%25B6%25E9%2597%25B4%25E6%25A0%25BC%25E5%25BC%258F&rsv_t=4b79tpN5ab1PwFp5kdPLo%2B58cJeaFb5Gn6KT%2BGqxi%2FOwFlDzGSDiNapKJF5lf1KMvJ8h&rsv_pq=93cb9e7f0000b57e&inputT=9621&rsv_sug3=106&rsv_sug1=81&rsv_sug7=100&rsv_sug2=0&rsv_sug4=9621";
         String access01 = "27.194.142.75 - - [13/Mar/2018:09:48:32 +0800] \"POST /api HTTP/1.1\" 200 240";
         String access02 = "125.120.161.43 - - [13/Mar/2018:19:07:54 +0800] \"POST /app_activityPopUp.do HTTP/2.0\" 200 160 \"-\" \"GJB4iPhone/2.8.6 (iPhone; iOS 10.3.2; Scale/2.00)\" \"-\" \"0.011\"";
-        ArrayList<String> unparsedLogList = autoGenTemplate.getUnparsedLogList(apaLog);
+        ArrayList<String> unparsedLogList = autoGenTemplate.getUnparsedLogList(sss);
         Map<String, String> patternMap = autoGenTemplate.createPatternMap("/Users/zhouxw/Documents/workspace/mybatisLearning/src/main/resources/WebPatterns");
         ArrayList<ArrayList<String>> arrayLists = autoGenTemplate.translate(unparsedLogList);
         String result = autoGenTemplate.concatenate(arrayLists);
-        ArrayList<String> arrayList = autoGenTemplate.translate(ll);
+
+        ArrayList<String> arrayList = autoGenTemplate.translate(log);
         System.out.println(arrayLists);
-        String s = "(?<URL>(?:(?:[HhTtPpSsMmOo3Ff]{3,5}://)?(?:(?<name0>(?:(?:[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(?:\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+)))|(?<name1>(?:(?<name2>(?<![0-9])(?:(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2}))(?![0-9])):(?:\\d{2,5})?)))))\n";
-        String r = autoGenTemplate.modifyPatternName(s,"xxxx");
-        System.out.println(r);
         System.out.println(apaLog);
         System.out.println("ss");
 
+
+
+
+    }
+
+    public void performance(String regex, String log) {
+        long start = System.currentTimeMillis();
+
+        for (int i = 0; i < 1000; i++) {
+            String myStr = new String(log);
+            Pattern pattern1 = Pattern.compile(regex);
+            Matcher matcher1 = pattern1.matcher(myStr);
+            System.out.println(matcher1.matches());
+        }
+        long end = System.currentTimeMillis();
+        System.out.println((end - start) / 1000.0);
     }
 
     public String modifyPatternName(String patternString,String name) {
@@ -124,7 +136,7 @@ public class AutoGenTemplate {
     }
 
     public ArrayList<String> getUnparsedLogList(String s) {
-        String spliter = getSpliterChar(s);
+        spliter = getSpliterChar(s);
         ArrayList  arrayList = new ArrayList<String>();
         int numOfSpace = 0;
         int from  = 0;
@@ -173,7 +185,7 @@ public class AutoGenTemplate {
         for (int i = 0; i < log.length(); i++) {
             char c = log.charAt(i);
             if (c <= '9' && c >= '0' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == '.' || c == '/' || c == '+' || c == '-' ||
-                    c == ':' || c == '/' || c == '\\' || c == '=') {
+                    c == ':' || c == '/' || c == '\\' || c == '=' || c == '^') {
             }else {
                 arrayList.add(c);
             }
@@ -250,22 +262,52 @@ public class AutoGenTemplate {
     }
 
     public String concatenate(ArrayList<ArrayList<String>> arrayLists) {
+        ArrayList<String> collect = new ArrayList<String>();
         StringBuffer stringBuffer = new StringBuffer("");
-
         int index = 0;
         for (ArrayList<String> arrayList : arrayLists) {
             if (arrayList.size() == 1) {
-                stringBuffer.append(arrayList.get(0));
+                collect.add(arrayList.get(0));
             }else {
                 for (int i = 0; i < arrayList.size(); i++) {
                     if (arrayList.get(i).length() < arrayList.get(index).length()) {
                         index = i;
                     }
                 }
-                stringBuffer.append(arrayList.get(index));
+                collect.add(arrayList.get(index));
                 index = 0;
             }
         }
+
+        for (int i = 0; i < collect.size(); i++) {
+            String tmp = collect.get(i);
+            String group = "";
+            int repeat = 1;
+            if (tmp.contains("(?<")) {
+                Matcher matcher = patternName.matcher(tmp);
+                while (matcher.find()) {
+                    group = matcher.group();
+                    break;
+                }
+                for (int j = i + 1; j < collect.size();j++) {
+                    if (collect.get(j).contains(group)) {
+                        String replace = group.substring(1,group.length() - 1);
+                        replace = replace + repeat;
+                        ++repeat;
+                        String s = modifyPatternName(collect.get(j),replace);
+                        collect.set(j,s);
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < collect.size() - 1; i++) {
+            String str = collect.get(i);
+            if (!spliter.equalsIgnoreCase(" ")) {
+                str = collect.get(i) + spliter;
+            }
+            stringBuffer.append(str);
+        }
+        stringBuffer.append(collect.get(collect.size() - 1));
         return stringBuffer.toString();
     }
 
@@ -279,8 +321,19 @@ public class AutoGenTemplate {
                     unparsedString = "" + Integer.valueOf(unparsedString.substring(0,unparsedString.length() - 3));
                     result =  "[\\S\\s]{x}".replace("x",unparsedString);
                 }else {
-                    //todo
-                    result = unparsedString;
+
+                    String token = " ".equalsIgnoreCase(spliter) ? " " : spliter.substring(1,spliter.length() - 3);
+                    String tmp = "[^xxxx]+".replace("xxxx",token);
+                    if (!unparsedString.contains(token)) {
+                        result = tmp;
+                    }else {
+                        Matcher matcher = Pattern.compile("[xxxx]".replace("xxxx",token)).matcher(unparsedString);
+                        for (int i = 0; i < unparsedString.split("[xxxx]".replace("xxxx",token)).length;i++) {
+                            result = result + tmp + spliter;
+                        }
+                        result = result.substring(0,result.length() - spliter.length());
+
+                    }
                 }
                 arrayList.add(result);
             }

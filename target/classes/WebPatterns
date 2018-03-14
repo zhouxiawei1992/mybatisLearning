@@ -1,6 +1,6 @@
 # Forked from https://github.com/elasticsearch/logstash/tree/v1.4.0/patterns
 
-chromeOrEdgeAgent (?:\s{0,5}Mozilla/\d{1,2}\.\d{1,2}\s{0,5}\([^)]+\)\s{0,5}AppleWebKit/\d{2,4}\.\d{1,3}\s{0,5}\([^)]+\)(?<ubantu>(?:\s{0,5}Ubuntu/\d{1,3}\.\d{1,3}\s{0,3}Chromium/\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4})?)\s{0,5}Chrome/\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}\s{0,5}Safari/[\d\w.\s/\n]+)
+chromeOrEdgeAgent (?:\s{0,5}Mozilla/\d{1,2}\.\d{1,2}\s{0,5}\([^)]+\)\s{0,5}AppleWebKit/\d{2,4}\.\d{1,3}\s{0,5}\([^)]+\)(?:\s{0,5}Ubuntu/\d{1,3}\.\d{1,3}\s{0,3}Chromium/\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4})?\s{0,5}Chrome/\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}\s{0,5}Safari/[\d\w.\s/\n]+)
 FIREFOXAGENT (?:\s{0,5}Mozilla/\d{1,2}\.\d{1,2}\s{0,5}\([^)]+\)\s{0,5}Gecko/[\d\w.\s/]+)
 IEAGENT (?:\s{0,5}Mozilla/\d{1,2}\.\d{1,2}\s{0,5}\([^)]+\)\s{0,5}(?:\s{0,3}like\s{0,3}Gecko)?)
 SAFARIAGENT (?:\s{0,5}Mozilla/\d{1,2}\.\d{1,2}\s{0,5}\([^)]+\)\s{0,5}AppleWebKit/\d{1,3}\.\d{1,3}\.\d{1,3}\s{0,5}\([^\)]+\)\s{0,5}Version/\d{1,2}\.\d{1,2}\.\d{1,2}\s{0,5}Safari/[\d\w.\s/\n]+)
@@ -21,7 +21,7 @@ IP (?:%{IPV4ORHOST}|%{IPV6}|(?:\d{1,3}.\d{1,3}.\d{1,3}.[*]))
 HOSTPORT (?:(?:%{IPV4ORHOST}|[LlOoCcAaHhOoSsTt]{9})(?::\d{2,5})?)
 
 
-NUMBER (?<![0-9.+-])(?>[+-]?(?:(?:[0-9]+(?:\.[0-9]+)?)|(?:\.[0-9]+)))
+NUM (?<![0-9.+-])(?>[+-]?(?:(?:[0-9]+(?:\.[0-9]+)?)|(?:\.[0-9]+)))
 
 # paths
 PATH (?:%{UNIXPATH}|%{WINPATH})
@@ -36,7 +36,7 @@ WINPATH (?>[A-Za-z]+:|\\)(?:\\[^\\?*]*)+
 # doesn't turn into %XX
 
 
-Domain (?:(?:[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(?:\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+))
+Domain ([a-zA-Z0-9][-a-zA-Z0-9]{0,62}(?:\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+)
 URL (?:(?:[HhTtPpSsMmOo3Ff]{3,5}://)?(?:%{Domain}|%{HOSTPORT}))
 
 URIPATH (?:(?:/[A-Za-z0-9$.+!*'(){},~:;=@#%_\-]*)+)
