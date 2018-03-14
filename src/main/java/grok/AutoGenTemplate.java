@@ -2,7 +2,6 @@ package grok;
 
 
 
-import com.sun.tools.javah.LLNI;
 import io.thekraken.grok.api.Match;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,8 +22,17 @@ public class AutoGenTemplate {
     public static String squareBracketRegex = "\\[[^]]*\\]";
     public static String parenthesisRegex = "\\([^)]*\\)";
     public static Pattern patternName = Pattern.compile("<[^>]+>");
+    public static Pattern filterPattern = Pattern.compile("%\\{[^}]+\\}");
+    private static final String GROK_PATTERN_PATH = "/Users/zhouxw/Documents/workspace/mybatisLearning/src/main/resources/WebPatterns";
+    public static Map<String, String> originalPatternMap = new HashMap<String, String>();
+    public static Map<String, String> trimedPatternMap = new HashMap<String, String>();
 
-    public Map<String, String> createPatternMap(String patternPath) throws Exception {
+    public void init() throws Exception{
+        originalPatternMap = createPatternMap(GROK_PATTERN_PATH);
+        trimOriginalPatternMap();
+    }
+
+    public static Map<String, String> createPatternMap(String patternPath) throws Exception {
         Map<String, String> map = new TreeMap<String, String>();
         if (StringUtils.isBlank(patternPath)) {
             throw new Exception("patternPath should not be empty or null");
@@ -49,10 +57,35 @@ public class AutoGenTemplate {
         }
         return map;
     }
+    public String trim(String field) throws Exception{
+        String value = originalPatternMap.get(field);
+        if (value == null) {
+            System.out.println(field + "---" + value);
+            throw new Exception("field can not find value");
+        }
+        if (!value.contains("%{")) {
+            return  value;
+        }else {
+            Matcher matcher = filterPattern.matcher(value);
+            while (matcher.find()) {
+                String group = matcher.group();
+                String subKey = group.substring(2,group.length() - 1);
+                String replacement = trim(subKey);
+                value = value.replace(group,replacement);
+            }
+            return value;
+        }
+    }
+    public void trimOriginalPatternMap() throws Exception{
+        for (String key : originalPatternMap.keySet()) {
+            trimedPatternMap.put(key,trim(key));
+        }
+    }
 
     public static void main(String[] args) throws Exception{
-        AutoGenTemplate autoGenTemplate = new AutoGenTemplate();
 
+        AutoGenTemplate autoGenTemplate = new AutoGenTemplate();
+        autoGenTemplate.init();
         Pattern pattern = Pattern.compile("(?<chromeOrEdgeAgent>(?:\\s{0,5}Mozilla/\\d{1,2}\\.\\d{1,2}\\s{0,5}\\([^)]+\\)\\s{0,5}AppleWebKit/\\d{2,4}\\.\\d{1,3}\\s{0,5}\\([^)]+\\)(?<ubantu>(?:\\s{0,5}Ubuntu/\\d{1,3}\\.\\d{1,3}\\s{0,3}Chromium/\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\.\\d{1,4})?)\\s{0,5}Chrome/\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\s{0,5}Safari/[\\d\\w.\\s/\\n]+))");
         String sss = "10.1.0.105 - - 24/Jan/2016:22:21:28 +0800 \"GET / HTTP/1.1\" 304 0 \"-\" \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36\" \"-\"";
         String log = "  10.1.0.105\t|24/Jan/2016:22:20:21 +0800|GET / HTTP/1.1|304|0|-|Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36|-|-|-|0.000|-";
@@ -61,18 +94,23 @@ public class AutoGenTemplate {
         String nodeLog = "[2016-01-31 12:02:25.84] [INFO] access - 42.120.73.203 - - \"GET /user/projects/ali_sls_log?ignoreError=true HTTP/1.1\" 304 - \"http://\n" +
                 "aliyun.com/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36\"";
         String tomCatLog = "127.0.0.1 192.168.254.108 - -1 127.0.0.1 HTTP/1.1 - GET 80&<60; GET /rightmainima/leftbott4.swf HTTP/1.1 304 5563A67708646B6AA299C33D59BE132A [22/Sep/2007:10:08:52 +0800] - /rightmainima/leftbott4.swf localhost 0 0.000";
-        String ll = "A B";
+        String sub = "POST /api HTTP/1.1";
+        String ll = "2010-07-30";
         String tmp = "https://www.baidu.com/s?wd=%E5%8F%AF%E8%83%BD%E7%9A%84%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F&rsv_spt=1&rsv_iqid=0xd503fc06000500f3&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&rqlang=cn&tn=baiduhome_pg&rsv_enter=1&oq=%25E6%2597%25B6%25E5%2588%2586%25E7%25A7%2592%25E6%2597%25B6%25E9%2597%25B4%25E6%25A0%25BC%25E5%25BC%258F&rsv_t=4b79tpN5ab1PwFp5kdPLo%2B58cJeaFb5Gn6KT%2BGqxi%2FOwFlDzGSDiNapKJF5lf1KMvJ8h&rsv_pq=93cb9e7f0000b57e&inputT=9621&rsv_sug3=106&rsv_sug1=81&rsv_sug7=100&rsv_sug2=0&rsv_sug4=9621";
-        ArrayList<String> unparsedLogList = autoGenTemplate.getUnparsedLogList(ll);
+        String access01 = "27.194.142.75 - - [13/Mar/2018:09:48:32 +0800] \"POST /api HTTP/1.1\" 200 240";
+        String access02 = "125.120.161.43 - - [13/Mar/2018:19:07:54 +0800] \"POST /app_activityPopUp.do HTTP/2.0\" 200 160 \"-\" \"GJB4iPhone/2.8.6 (iPhone; iOS 10.3.2; Scale/2.00)\" \"-\" \"0.011\"";
+        ArrayList<String> unparsedLogList = autoGenTemplate.getUnparsedLogList(apaLog);
         Map<String, String> patternMap = autoGenTemplate.createPatternMap("/Users/zhouxw/Documents/workspace/mybatisLearning/src/main/resources/WebPatterns");
-        ArrayList<ArrayList<String>> arrayLists = autoGenTemplate.translate(unparsedLogList,patternMap);
+        ArrayList<ArrayList<String>> arrayLists = autoGenTemplate.translate(unparsedLogList);
         String result = autoGenTemplate.concatenate(arrayLists);
-        ArrayList<String> arrayList = autoGenTemplate.translate(ll,patternMap);
+        ArrayList<String> arrayList = autoGenTemplate.translate(ll);
         System.out.println(arrayLists);
         String s = "(?<URL>(?:(?:[HhTtPpSsMmOo3Ff]{3,5}://)?(?:(?<name0>(?:(?:[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(?:\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+)))|(?<name1>(?:(?<name2>(?<![0-9])(?:(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2}))(?![0-9])):(?:\\d{2,5})?)))))\n";
         String r = autoGenTemplate.modifyPatternName(s,"xxxx");
         System.out.println(r);
         System.out.println(apaLog);
+        System.out.println("ss");
+
     }
 
     public String modifyPatternName(String patternString,String name) {
@@ -213,7 +251,7 @@ public class AutoGenTemplate {
 
     public String concatenate(ArrayList<ArrayList<String>> arrayLists) {
         StringBuffer stringBuffer = new StringBuffer("");
-        String result = "(?:<log>xxxx)";
+
         int index = 0;
         for (ArrayList<String> arrayList : arrayLists) {
             if (arrayList.size() == 1) {
@@ -228,21 +266,22 @@ public class AutoGenTemplate {
                 index = 0;
             }
         }
-         result = result.replace("xxxx",stringBuffer.toString());
-
-        return result;
+        return stringBuffer.toString();
     }
 
-    public ArrayList<ArrayList<String>> translate(ArrayList<String> unparsedList, Map<String,String> patternMap) {
+    public ArrayList<ArrayList<String>> translate(ArrayList<String> unparsedList) throws Exception{
         ArrayList<ArrayList<String>> arrayLists = new ArrayList();
         for (String unparsedString : unparsedList) {
-            ArrayList<String> arrayList = translate(unparsedString,patternMap);
+            ArrayList<String> arrayList = translate(unparsedString);
             if (arrayList.size() == 0) {
+                String result = "";
                 if (unparsedString.contains("###")) {
                     unparsedString = "" + Integer.valueOf(unparsedString.substring(0,unparsedString.length() - 3));
+                    result =  "[\\S\\s]{x}".replace("x",unparsedString);
+                }else {
+                    //todo
+                    result = unparsedString;
                 }
-                String result = "[\\S\\s]{x}";
-                result = result.replace("x",unparsedString);
                 arrayList.add(result);
             }
             arrayLists.add(arrayList);
@@ -250,7 +289,7 @@ public class AutoGenTemplate {
         return arrayLists;
     }
 
-    public ArrayList<String> translate(String log, Map<String,String> map) {
+    public ArrayList<String> translate(String log) {
         int frontSpace = 0;
         int endSpace = 0;
         String frontSpacePattern = "\\s{1,x}";
@@ -304,20 +343,12 @@ public class AutoGenTemplate {
         }
 
         ArrayList<String> arrayList = new ArrayList<String>();
-        for (String pattern : map.keySet()) {
+        for (String key : trimedPatternMap.keySet()) {
             String resultStr = "";
-            GrokUtils grokUtils = new GrokUtils();
-            String search;
-            if (map.get(pattern).contains("%{")) {
-                search = map.get(pattern);
-            }else {
-                search = "%{" + pattern + "}";
-            }
-            Match match = GrokUtils.getMatch(search,log);
-            if (match != null && match.getMatch() != null && match.getMatch().matches()) {
-                resultStr = grokUtils.getGrok().getNamedRegex();
-                resultStr = "(?<xx>" + resultStr + ")";
-                resultStr = resultStr.replace("xx",pattern);
+            String pattern = trimedPatternMap.get(key);
+            if (log.matches(pattern)) {
+                resultStr = "(?<xx>" + pattern + ")";
+                resultStr = resultStr.replace("xx",key);
                 if (frontAppendix.length() > 0) {
                     resultStr = frontAppendix + resultStr;
                 }
