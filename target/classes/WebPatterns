@@ -86,7 +86,7 @@ ISO8601_SECOND (?:%{SECOND}|60)
 
 TIMESTAMP (?:%{DATE}[T :]?%{TIME}?[T :]?%{ISO8601_TIMEZONE}?)
 
-REQUEST (?:(?:%{REQUESTMETHOD}|-)\s{1,3}(?:%{URIPATH}|-)\s{1,3}%{visitedProtocal})
+REQUEST (?:(?:%{REQUESTMETHOD}|-)\s{1,3}(?:%{URIPATHPARAM}|-)\s{1,3}%{visitedProtocal})
 REQUESTMETHOD (?:\b[PpOpSsTtGgEeDdLlHhAaPpUuRrCc]{3,5}\b)
 visitedProtocal (?:[HhtTPpSs]{4,5}/\d.\d)
 

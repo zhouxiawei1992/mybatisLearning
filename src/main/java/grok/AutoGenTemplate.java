@@ -95,18 +95,24 @@ public class AutoGenTemplate {
         String tomCatLog = "127.0.0.1 192.168.254.108 - -1 127.0.0.1 HTTP/1.1 - GET 80&<60; GET /rightmainima/leftbott4.swf HTTP/1.1 304 5563A67708646B6AA299C33D59BE132A [22/Sep/2007:10:08:52 +0800] - /rightmainima/leftbott4.swf localhost 0 0.000";
         String sub = "POST /api HTTP/1.1";
         String tmp = "https://www.baidu.com/s?wd=%E5%8F%AF%E8%83%BD%E7%9A%84%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F&rsv_spt=1&rsv_iqid=0xd503fc06000500f3&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&rqlang=cn&tn=baiduhome_pg&rsv_enter=1&oq=%25E6%2597%25B6%25E5%2588%2586%25E7%25A7%2592%25E6%2597%25B6%25E9%2597%25B4%25E6%25A0%25BC%25E5%25BC%258F&rsv_t=4b79tpN5ab1PwFp5kdPLo%2B58cJeaFb5Gn6KT%2BGqxi%2FOwFlDzGSDiNapKJF5lf1KMvJ8h&rsv_pq=93cb9e7f0000b57e&inputT=9621&rsv_sug3=106&rsv_sug1=81&rsv_sug7=100&rsv_sug2=0&rsv_sug4=9621";
-        String access01 = "27.194.142.75 - - [13/Mar/2018:09:48:32 +0800] \"POST /api HTTP/1.1\" 200 240";
-        String access02 = "125.120.161.43 - - [13/Mar/2018:19:07:54 +0800] \"POST /app_activityPopUp.do HTTP/2.0\" 200 160 \"-\" \"GJB4iPhone/2.8.6 (iPhone; iOS 10.3.2; Scale/2.00)\" \"-\" \"0.011\"";
-        ArrayList<String> unparsedLogList = autoGenTemplate.getUnparsedLogList(sss);
+
+        String access01 = "116.62.158.18 - - [13/Mar/2018:19:48:30 +0800] \"GET /interface/gateway/account.ashx?balance_change_type=3&client_ip=192.168.42.29&create_internal_site_id=fd83d76224034cdeb86ba5815a771588&extend_id=STP1712280000173_T2366&input_charset=utf-8&is_need_original_trade_no=1&is_need_time=1&out_bill_id=&out_trade_no=&platform_lang=java&req_user_id=US14072362683001-03AD&service=query_account_detail_status&sign_type=MD5&version=1.6&sign=d421a9dcc0f3b5f5da5f90ae69e83941 HTTP/1.1\" 200 79 \"-\" \"Apache-HttpClient/4.4.1 (Java/1.8.0_144)\"";
+        String access02 = "61.130.151.18 - - [13/Mar/2018:19:49:26 +0800] \"GET /static/e4d79c44/images/24x24/notepad.png HTTP/1.1\" 200 955 \"http://stm-jenkins.5173.com/view/stm-dev-pubg171/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.146 Safari/537.36\"";
+        String access03 = "192.168.181.222 - - [13/Mar/2018:17:48:56 +0800] \"GET /resources/images/img2.5.3/back2.jpg HTTP/2.0\" 200 689472 \"https://192.168.180.2/resources/css/login.css\" \"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36\" \"-\" \"0.006\"";
+        String access04 = "10.158.247.150 - - [13/Mar/2018:09:58:56 +0800] \"GET /upload/a7/f4/b1/f0/f0/ac1434f1ca9c13460cb834.png HTTP/1.0\" 200 -";
+        String access05 = "10.158.231.140 - - [13/Mar/2018:17:36:40 +0800] \"GET /goods/goods/detail?goods_id=1 HTTP/1.0\" 200 21646";
+        String iis01 = "2018-03-13 12:15:41 192.168.0.231 GET / recommenduserid=US12013047573191-0024 80 - 10.1.1.254 Mozilla/5.0+(Windows+NT+6.1;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/55.0.2883.87+Safari/537.36 200 0 0 124";
+        String iis02 = "2018-03-13 12:01:47 W3SVC1 iZ2316fojp9Z 192.168.251.238 GET /Article/Details-2739 - 80 - 157.55.39.223 HTTP/1.1 Mozilla/5.0+(compatible;+bingbot/2.0;++http://www.bing.com/bingbot.htm) - - www.hhsurong.com 200 0 0 20755 291 577";
+        String iis03 = "2018-03-12 04:30:58 172.16.100.7 GET /public/images/index2/coo-10.jpg - 80 - 211.95.57.242 Mozilla/5.0+(Windows+NT+10.0;+Win64;+x64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/58.0.3029.81+Safari/537.36 200 0 0 6";
+        ArrayList<String> unparsedLogList = autoGenTemplate.getUnparsedLogList(access05);
         Map<String, String> patternMap = autoGenTemplate.createPatternMap("/Users/zhouxw/Documents/workspace/mybatisLearning/src/main/resources/WebPatterns");
         ArrayList<ArrayList<String>> arrayLists = autoGenTemplate.translate(unparsedLogList);
         String result = autoGenTemplate.concatenate(arrayLists);
-
-        ArrayList<String> arrayList = autoGenTemplate.translate(log);
+        String ll = "GET /interface/gateway/account.ashx?balance_change_type=3&client_ip=192.168.42.29&create_internal_site_id=fd83d76224034cdeb86ba5815a771588&extend_id=STP1712280000173_T2366&input_charset=utf-8&is_need_original_trade_no=1&is_need_time=1&out_bill_id=&out_trade_no=&platform_lang=java&req_user_id=US14072362683001-03AD&service=query_account_detail_status&sign_type=MD5&version=1.6&sign=d421a9dcc0f3b5f5da5f90ae69e83941 HTTP/1.1";
+        ArrayList<String> arrayList = autoGenTemplate.translate(ll);
         System.out.println(arrayLists);
         System.out.println(apaLog);
         System.out.println("ss");
-
 
 
 
