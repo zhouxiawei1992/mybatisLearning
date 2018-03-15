@@ -9,7 +9,8 @@ class Window {
 }
 public class JavaBasic {
     static Window W6;
-    Window w2 = new Window("W2W2");
+
+    Window w2 = new Window("W2W2-------");
     int i;
     public static void f() {
         System.out.println("f()");
@@ -23,7 +24,7 @@ public class JavaBasic {
         w2 = new Window("W2");
         System.out.println("constructor");
     }
-    Window w1 = new Window("W1W1");
+    Window w1 = new Window("W1W1---------");
     static {
         System.out.println(W6);
 
@@ -36,7 +37,16 @@ public class JavaBasic {
     static {
         W6 = new Window("W6");
     }
+
     public static void main(String[] args) {
-        new JavaBasic().f2();
+        JavaBasic.f();
+        System.out.println(BB.i );
+
     }
 }
+ interface AA {
+    int i = 0;
+ }
+ class BB implements AA {
+
+ }

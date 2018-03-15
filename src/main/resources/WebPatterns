@@ -1,6 +1,6 @@
 # Forked from https://github.com/elasticsearch/logstash/tree/v1.4.0/patterns
 
-chromeOrEdgeAgent (?:\s{0,5}Mozilla/\d{1,2}\.\d{1,2}\s{0,5}\([^)]+\)\s{0,5}AppleWebKit/\d{2,4}\.\d{1,3}\s{0,5}\([^)]+\)(?:\s{0,5}Ubuntu/\d{1,3}\.\d{1,3}\s{0,3}Chromium/\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4})?\s{0,5}Chrome/\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}\s{0,5}Safari/[\d\w.\s/\n]+)
+chromeOrEdgeAgent \s{0,5}Mozilla/\d{1,2}\.\d{1,2}\s{0,5}\([^)]+\)\s{0,5}AppleWebKit/\d{2,4}\.\d{1,3}\s{0,5}\([^)]+\)(?:\s{0,5}Ubuntu/\d{1,3}\.\d{1,3}\s{0,3}Chromium/\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4})?\s{0,5}Chrome/\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}\s{0,5}Safari/[\d\w.\s/\n]+
 FIREFOXAGENT (?:\s{0,5}Mozilla/\d{1,2}\.\d{1,2}\s{0,5}\([^)]+\)\s{0,5}Gecko/[\d\w.\s/]+)
 IEAGENT (?:\s{0,5}Mozilla/\d{1,2}\.\d{1,2}\s{0,5}\([^)]+\)\s{0,5}(?:\s{0,3}like\s{0,3}Gecko)?)
 SAFARIAGENT (?:\s{0,5}Mozilla/\d{1,2}\.\d{1,2}\s{0,5}\([^)]+\)\s{0,5}AppleWebKit/\d{1,3}\.\d{1,3}\.\d{1,3}\s{0,5}\([^\)]+\)\s{0,5}Version/\d{1,2}\.\d{1,2}\.\d{1,2}\s{0,5}Safari/[\d\w.\s/\n]+)
@@ -98,8 +98,8 @@ DATESTAMP_01 (?:%{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{TZ} %{YEAR})
 DATESTAMP_02 (?:%{TIMESTAMP}[ :]?%{APM}?[ :]?%{TZ}?)
 DATESTAMP_EVENTLOG %{YEAR}%{MONTHNUM}%{MONTHDAY}%{HOUR}%{MINUTE}%{SECOND}
 
-A (?:AAA%{B}----AAA%{C})
-B (?:BBB%{D}BBBB)
+A  AAA%{B}----AAA%{C}
+B  BBB%{D}BBBB
 C CCCCCCCCC
 D DDDDDDDDD
 # Log formats
