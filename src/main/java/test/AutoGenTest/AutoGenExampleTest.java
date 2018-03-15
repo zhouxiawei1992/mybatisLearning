@@ -36,6 +36,7 @@ public class AutoGenExampleTest {
 
     static  ArrayList<String> unparsedLogList = new ArrayList<String>();
     static Map<String, String> patternMap = new HashMap<String, String>();
+    static String ll = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
 
     @Before
     public void setup() throws Exception {
@@ -54,41 +55,63 @@ public class AutoGenExampleTest {
     public void testChrome() {
         String ll = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
         ArrayList<String> arrayList = autoGenTemplate.translate(ll);
-        String patternStr = "(?<chromeOrEdgeAgent>\\s{0,5}Mozilla/\\d{1,2}\\.\\d{1,2}\\s{0,5}\\([^)]+\\)\\s{0,5}AppleWebKit/\\d{2,4}\\.\\d{1,3}\\s{0,5}\\([^)]+\\)(?:\\s{0,5}Ubuntu/\\d{1,3}\\.\\d{1,3}\\s{0,3}Chromium/\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\.\\d{1,4})?\\s{0,5}Chrome/\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\s{0,5}Safari/[\\d\\w.\\s/\\n]+)";
+        String patternStr = arrayList.get(1);
         Pattern pattern = Pattern.compile(patternStr);
         Matcher matcher = pattern.matcher(ll);
         System.out.println(matcher.matches());
-        while (matcher.find()) {
-            System.out.println(matcher.group());
-        }
+        String replacement = "[[[${chromeOrEdgeAgent}]]]]";
+        String newChrome = matcher.replaceAll(replacement);
+        System.out.println(newChrome);
+        System.out.println(matcher.groupCount());
+        System.out.println();
 
     }
     @Test
     public void testMatch() {
         String ll = "AA";
-        Pattern pattern = Pattern.compile("(AA)");
+        Pattern pattern = Pattern.compile("(?<aa>AA)(b)(c)(d)d");
         Matcher matcher = pattern.matcher(ll);
         System.out.println(matcher.matches());
         System.out.println(matcher.groupCount());
         while (matcher.find()) {
-            System.out.println(matcher.group(1));
+            System.out.println(matcher.group(0));
         }
     }
+    @SuppressWarnings("all")
     @Test
-    public void testGroup() {
-        Pattern p = Pattern.compile("(\\d+,)(\\d+)");
-        String s = "123,456-34,345";
-        Matcher m = p.matcher(s);
-        while(m.find())
-        {
-            System.out.println("m.group():"+m.group()); //打印一个大组
-            System.out.println("m.group(1):"+m.group(1)); //打印组1
-            System.out.println("m.group(2):"+m.group(2)); //打印组2
-            System.out.println();
-        }
-        System.out.println("捕获个数:groupCount()="+m.groupCount());
+    public void testGroup() throws  Exception{
+        ArrayList<ArrayList<String>> arrayLists = autoGenTemplate.translate(unparsedLogList);
+        String result = autoGenTemplate.concatenate(arrayLists);
+        ArrayList<String> arrayList = autoGenTemplate.getCapturedGroupNames(result);
+
+        Map<String,String> map = autoGenTemplate.getCapturedResult(result,apaLog);
+        System.out.println(map.size());
+        System.out.println(map);
     }
 
+    @Test
+    public void testPlacement() throws Exception {
+        ArrayList<ArrayList<String>> arrayLists = autoGenTemplate.translate(unparsedLogList);
+        String result = autoGenTemplate.concatenate(arrayLists);
+        ArrayList<Map<String,String>> replaceBeans = new ArrayList<Map<String, String>>();
+        Map<String,String> map1 = new HashMap<String, String>() {
+            {
+                put("old","NUM");
+                put("new","XXXX");
+            }
+        };
+        Map<String,String> map2 = new HashMap<String, String>() {
+            {
+                put("old","NUM1");
+                put("new","YYYY");
+            }
+        };
+        replaceBeans.add(map1);
+        replaceBeans.add(map2);
+        String s = autoGenTemplate.updateRegEx(result,replaceBeans);
+        System.out.println(s);
+
+    }
 
 
 

@@ -22,7 +22,7 @@ public class AutoGenTemplate {
     public static String parenthesisRegex = "\\([^)]*\\)";
     public static Pattern patternName = Pattern.compile("<[^>]+>");
     public static Pattern filterPattern = Pattern.compile("%\\{[^}]+\\}");
-    private static final String GROK_PATTERN_PATH = "/Users/zhouxw/Documents/workspace/mybatisLearning/src/main/resources/WebPatterns";
+    private static final String GROK_PATTERN_PATH = "/Users/zhouxw/Documents/workspace/mybatisLearning/src/main/resources/WebPatterns_bak";
     public static Map<String, String> originalPatternMap = new HashMap<String, String>();
     public static Map<String, String> trimedPatternMap = new HashMap<String, String>();
     public static String spliter = " ";
@@ -384,11 +384,62 @@ public class AutoGenTemplate {
                     resultStr = resultStr + endAppendix;
                 }
                 arrayList.add(resultStr);
-                System.out.println(resultStr);
             }
         }
         return arrayList;
     }
+    public ArrayList<String> getCapturedGroupNames(String patternString) {
+         Pattern namePattern = Pattern.compile("\\(\\?<[^>!=?]+>");
+        ArrayList<String> arrayList = new ArrayList<String>();
+        Matcher matcher = namePattern.matcher(patternString);
+        while (matcher.find()) {
+            String name = matcher.group().substring(3,matcher.group().length() - 1);
+            arrayList.add(name);
+        }
+        return arrayList;
+    }
+    @SuppressWarnings("all")
+    public Map<String,String> getCapturedResult(String regEx, String log) throws Exception{
+        ArrayList<String> nameArrayList = getCapturedGroupNames(regEx);
+        nameArrayList.set(0,"xxxx");
+        nameArrayList.set(1,"yyyy");
+        Pattern pattern = Pattern.compile(regEx);
+        Matcher matcher = pattern.matcher(log);
+        Map<String,String> resultMap = new HashMap<String, String>();
+        while (matcher.find()) {
+            int i = 0;
+            while (i < nameArrayList.size()) {
+                try {
+                    String matchedResult = matcher.group(nameArrayList.get(i));
+                    resultMap.put(nameArrayList.get(i),matchedResult);
+                    System.out.println(matcher.group(nameArrayList.get(i)));
+                }catch (IllegalArgumentException iae) {
+
+                }
+                i++;
+            }
+        }
+        return resultMap;
+    }
+
+    /***
+     *
+     * @param regEx
+     * @param replaceBeans (old:value(old),new:value(new))
+     * @return
+     */
+    public String updateRegEx(String regEx,ArrayList<Map<String,String>> replaceBeans) {
+        String newRegEx = new String(regEx);
+        if (replaceBeans.size() > 0) {
+            for (Map<String,String> replaceBean : replaceBeans) {
+                String old = replaceBean.get("old") == null ? "xxxxxxxx" : replaceBean.get("old");
+                String newValue = replaceBean.get("new") == null ? "xxxxxxxx" : replaceBean.get("new");
+                newRegEx = newRegEx.replace("?<" + old + ">", "?<" + newValue + ">");
+            }
+        }
+        return newRegEx;
+    }
+
 
 
 }
