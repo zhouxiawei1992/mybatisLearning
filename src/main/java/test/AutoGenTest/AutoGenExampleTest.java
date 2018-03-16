@@ -42,11 +42,18 @@ public class AutoGenExampleTest {
     @Before
     public void setup() throws Exception {
         autoGenTemplate.init();
-        unparsedLogList =  autoGenTemplate.getUnparsedLogList(access05);
+        unparsedLogList =  autoGenTemplate.getUnparsedLogList(access03);
     }
 
     @Test
-    public void Test01() throws Exception{
+    public void testTranslate() {
+        String translate = "GET /&wd=&eqid=f7358f5700000ddb000000055aa77f5f HTTP/1.1";
+        ArrayList arrayList = autoGenTemplate.translate(translate);
+        System.out.println(arrayList);
+    }
+
+    @Test
+    public void TestGetRegEx() throws Exception{
         ArrayList<ArrayList<String>> arrayLists = autoGenTemplate.translate(unparsedLogList);
         String result = autoGenTemplate.concatenate(arrayLists);
         System.out.println(arrayLists);
@@ -130,6 +137,40 @@ public class AutoGenExampleTest {
         String newRegEx = autoGenTemplate.updateRegExOnNum(result,arrayList);
         System.out.println(newRegEx);
 
+    }
+    @Test
+    public void testMatchRadio() {
+        String access05 = "(?<Domain>(?:([a-zA-Z0-9][-a-zA-Z0-9]{0,62}(?:\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+))|(?:[^ \n" +
+                "]+))[\\S\\s]{1}[^ ]+[\\S\\s]{1}[^ ]+[\\S\\s]{1}(?<TIMESTAMP>(?:\\[(?:(?:(?:(?:0?[1-9]|1[0-2])[./-](?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])[./-](?:\\d\\d){1,2})|(?:(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])[./-](?:0?[1-9]|1[0-2])[./-](?:\\d\\d){1,2})|(?:(?:\\d\\d){1,2}[/:年-](?:0?[1-9]|1[0-2])[月:/-](?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])?[日]?)|(?:(?:(?:0[1-9])|(?:[12][0-9])|(?:3[01])|[1-9])[./-](?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)[./-](?:\\d\\d){1,2}))[T :]?(?!<[0-9])(?:2[0123]|[01]?[0-9])[:时](?:[0-5][0-9])[:分]?(?:(?:[0-5]?[0-9]|60)(?:[:.,][0-9]+)?)?[秒]?(?![0-9])?[T :]?(?:Z|[+-](?:2[0123]|[01]?[0-9])(?::?(?:[0-5][0-9])))?)\\])|(?:[^ \n" +
+                "]+))[\\S\\s]{1}(?<REQUEST>(?:\"(?:(?:(?:\\b[PpOpSsTtGgEeDdLlHhAaPpUuRrCc]{3,5}\\b)|-)\\s{1,3}(?:(?:(?:(?:/[A-Za-z0-9$.+!*'(){},~:;=&@#%_\\-]*)+)(?:(?:\\?[A-Za-z0-9$.+!*'|(){},~@#%&/=:;_?\\-\\[\\]]*))?)|-)\\s{1,3}(?:[HhtTPpSs]{4,5}/\\d.\\d))\")|(?:[^ \n" +
+                "]+))[\\S\\s]{1}(?<NUM>(?:(?<![0-9.+-])(?>[+-]?(?:(?:[0-9]+(?:\\.[0-9]+)?)|(?:\\.[0-9]+))))|(?:[^ \n" +
+                "]+))[\\S\\s]{1}(?<NUM1>(?:(?<![0-9.+-])(?>[+-]?(?:(?:[0-9]+(?:\\.[0-9]+)?)|(?:\\.[0-9]+))))|(?:[^ \n" +
+                "]+))[\\S\\s]{1}(?<URLWITHPATHPARAM>(?:\"(?:(?:(?:[HhTtPpSsMmOo3Ff]{3,5}://)?(?:([a-zA-Z0-9][-a-zA-Z0-9]{0,62}(?:\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+)|(?:(?:(?<![0-9])(?:(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2}))(?![0-9])|[LlOoCcAaHhOoSsTt]{9})(?::\\d{2,5})?)))(?:(?:(?:/[A-Za-z0-9$.+!*'(){},~:;=&@#%_\\-]*)+)(?:(?:\\?[A-Za-z0-9$.+!*'|(){},~@#%&/=:;_?\\-\\[\\]]*))?))\")|(?:[^ \n" +
+                "]+))[\\S\\s]{1}(?<chromeOrEdgeAgent>(?:\"\\s{0,5}Mozilla/\\d{1,2}\\.\\d{1,2}\\s{0,5}\\([^)]+\\)\\s{0,5}AppleWebKit/\\d{2,4}\\.\\d{1,3}\\s{0,5}\\([^)]+\\)(?:\\s{0,5}Ubuntu/\\d{1,3}\\.\\d{1,3}\\s{0,3}Chromium/\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\.\\d{1,4})?\\s{0,5}Chrome/\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}\\s{0,5}Safari/[\\d\\w.\\s/\\n]+\")|(?:[^ \n" +
+                "]+))[\\S\\s]{1}[^ ]+[\\S\\s]{1}(?<NUM2>(?:\"(?<![0-9.+-])(?>[+-]?(?:(?:[0-9]+(?:\\.[0-9]+)?)|(?:\\.[0-9]+)))\")|(?:[^ \n" +
+                "]+))[\\S\\s]{0}";
+        Pattern pattern = Pattern.compile(access05);
+
+        String s = autoGenTemplate.convertFileToString("/Users/zhouxw/Desktop/webAccess/access_3.log","utf-8");
+        String[] strings = s.split("\\n");
+        ArrayList<String> arrayList = new ArrayList<String>(Arrays.asList(strings));
+        int total = arrayList.size();
+        int matchNum = 0;
+        for (int i = 0; i < arrayList.size(); i++) {
+            Matcher matcher = pattern.matcher(arrayList.get(i));
+            if (matcher.matches()) {
+                matchNum++;
+                System.out.println(matchNum);
+            }else {
+//                System.out.println("------------");
+//                System.out.println(arrayList.get(i));
+//                System.out.println(i);
+            }
+        }
+        System.out.println(matchNum * 1.0 / total);
+
+        String failtureLog = "125.88.254.111 - - [13/Mar/2018:18:12:22 +0800] \"GET /&wd=&eqid=f7358f5700000ddb000000055aa77f5f HTTP/1.1\" 301 695";
+        System.out.println(pattern.matcher(failtureLog).matches());
     }
 
 

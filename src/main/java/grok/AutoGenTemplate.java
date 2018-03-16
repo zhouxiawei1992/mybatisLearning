@@ -20,7 +20,7 @@ public class AutoGenTemplate {
     public static String parenthesisRegex = "\\([^)]*\\)";
     public static Pattern patternName = Pattern.compile("<[^>]+>");
     public static Pattern filterPattern = Pattern.compile("%\\{[^}]+\\}");
-    private static final String GROK_PATTERN_PATH = "/Users/zhouxw/Documents/workspace/mybatisLearning/src/main/resources/WebPatterns_bak";
+    private static final String GROK_PATTERN_PATH = "/Users/zhouxw/Documents/workspace/mybatisLearning/src/main/resources/WebPatterns";
     public static Map<String, String> originalPatternMap = new HashMap<String, String>();
     public static Map<String, String> trimedPatternMap = new HashMap<String, String>();
     public static String spliter = " ";
@@ -378,19 +378,23 @@ public class AutoGenTemplate {
             String resultStr = "";
             String pattern = trimedPatternMap.get(key);
             if (log.matches(pattern)) {
-                resultStr = "(?<xx>" + pattern + ")";
-                resultStr = resultStr.replace("xx",key);
                 if (frontAppendix.length() > 0) {
-                    resultStr = frontAppendix + resultStr;
+                    pattern = frontAppendix + pattern;
                 }
                 if (endAppendix.length() > 0) {
-                    resultStr = resultStr + endAppendix;
+                    pattern = pattern + endAppendix;
                 }
+                pattern = "(?:xxxxxx)".replace("xxxxxx",pattern);
+                String tmp = "|(?:[^xxxx\n]+)".replace("xxxx",spliter);
+                pattern = pattern + tmp;
+                resultStr = "(?<xx>" + pattern + ")";
+                resultStr = resultStr.replace("xx",key);
                 arrayList.add(resultStr);
             }
         }
         return arrayList;
     }
+
     public ArrayList<String> getCapturedGroupNames(String patternString) {
          Pattern namePattern = Pattern.compile("\\(\\?<[^>!=?]+>");
         ArrayList<String> arrayList = new ArrayList<String>();
