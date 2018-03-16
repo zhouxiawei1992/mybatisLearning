@@ -4,9 +4,7 @@ package grok;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,6 +54,7 @@ public class AutoGenTemplate {
         }
         return map;
     }
+
     public String trim(String field) throws Exception{
         String value = originalPatternMap.get(field);
         if (value == null) {
@@ -245,6 +244,10 @@ public class AutoGenTemplate {
                 collect.add(arrayList.get(0));
             }else {
                 for (int i = 0; i < arrayList.size(); i++) {
+                    if (arrayList.get(i).contains("(?<NUM")) {
+                        index = i;
+                        break;
+                    }
                     if (arrayList.get(i).length() < arrayList.get(index).length()) {
                         index = i;
                     }
@@ -398,21 +401,96 @@ public class AutoGenTemplate {
         }
         return arrayList;
     }
+
+    public static String convertFileToString(String path, String encoding) {
+        File file = new File(path);
+        if (!file.exists()) return null;
+        InputStreamReader reader = null;
+        StringWriter writer = new StringWriter();
+        try {
+            if (encoding == null || "".equals(encoding.trim())) {
+                reader = new InputStreamReader(new FileInputStream(file), encoding);
+            } else {
+                reader = new InputStreamReader(new FileInputStream(file));
+            }
+            //将输入流写入输出流
+            char[] buffer = new char[1024];
+            int n = 0;
+            while (-1 != (n = reader.read(buffer))) {
+                writer.write(buffer, 0, n);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (reader != null)
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+        //返回转换结果
+        if (writer != null)
+            return writer.toString();
+        else return null;
+    }
+
+     public String updateRegExOnNum(String regEx,ArrayList<String> logs) {
+
+         if (logs.size() > 50) {
+             logs = new ArrayList<String>(logs.subList(0,50));
+         }
+         ArrayList<String> arrayList = getCapturedGroupNames(regEx);
+         ArrayList<String> numGroupList = new ArrayList<String>();
+         ArrayList<Map<String,String>> replaceBeans = new ArrayList<Map<String, String>>();
+         String result = new String(regEx);
+         String pickedGroupName = "";
+         for (String s :arrayList) {
+             if (s.contains("NUM")) {
+                numGroupList.add(s);
+             }
+         }
+         if (arrayList.size() < 1) return result;
+         for (String log : logs) {
+            Map<String,String> m = getCapturedResultByGroupNames(regEx,numGroupList,log);
+            for (int i = 0; i < numGroupList.size(); i++) {
+                if (m.get(numGroupList.get(i)) != null && !state(m.get(numGroupList.get(i)))) {
+                    numGroupList.remove(i);
+                }
+                if (numGroupList.size() < 1) {
+                    return result;
+                }
+            }
+         }
+         pickedGroupName = numGroupList.get(0);
+         Map<String,String> replaceBean = new HashMap<String, String>();
+         replaceBean.put("old",pickedGroupName);
+         replaceBean.put("new","state");
+         replaceBeans.add(replaceBean);
+         result = updateRegEx(regEx,replaceBeans);
+         return result;
+    }
+
+    public boolean state(String num) {
+        int no = Integer.valueOf(num);
+        if ( (no >= 100 && no < 110) || (no >= 200 && no < 210) || (no >= 300 && no < 310) || (no >= 400 && no < 420) || (no >= 500 && no < 510)) {
+            return true;
+        }
+        return false;
+    }
+
     @SuppressWarnings("all")
-    public Map<String,String> getCapturedResult(String regEx, String log) throws Exception{
-        ArrayList<String> nameArrayList = getCapturedGroupNames(regEx);
-        nameArrayList.set(0,"xxxx");
-        nameArrayList.set(1,"yyyy");
+    public Map<String,String> getCapturedResultByGroupNames(String regEx, ArrayList<String> nameArrayList, String log) {
+        Map<String,String> resultMap = new HashMap<String, String>();
         Pattern pattern = Pattern.compile(regEx);
         Matcher matcher = pattern.matcher(log);
-        Map<String,String> resultMap = new HashMap<String, String>();
         while (matcher.find()) {
             int i = 0;
             while (i < nameArrayList.size()) {
                 try {
                     String matchedResult = matcher.group(nameArrayList.get(i));
                     resultMap.put(nameArrayList.get(i),matchedResult);
-                    System.out.println(matcher.group(nameArrayList.get(i)));
                 }catch (IllegalArgumentException iae) {
 
                 }
@@ -420,6 +498,11 @@ public class AutoGenTemplate {
             }
         }
         return resultMap;
+    }
+
+    public Map<String,String> getCapturedResult(String regEx, String log) throws Exception{
+        ArrayList<String> nameArrayList = getCapturedGroupNames(regEx);
+        return getCapturedResultByGroupNames(regEx,nameArrayList,log);
     }
 
     /***
@@ -439,6 +522,8 @@ public class AutoGenTemplate {
         }
         return newRegEx;
     }
+
+
 
 
 

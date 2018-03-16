@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -41,7 +42,7 @@ public class AutoGenExampleTest {
     @Before
     public void setup() throws Exception {
         autoGenTemplate.init();
-        unparsedLogList =  autoGenTemplate.getUnparsedLogList(apaLog);
+        unparsedLogList =  autoGenTemplate.getUnparsedLogList(access05);
     }
 
     @Test
@@ -110,6 +111,24 @@ public class AutoGenExampleTest {
         replaceBeans.add(map2);
         String s = autoGenTemplate.updateRegEx(result,replaceBeans);
         System.out.println(s);
+
+    }
+    @Test
+    public void testGetStringFromFile() {
+        String s = autoGenTemplate.convertFileToString("/Users/zhouxw/Desktop/webAccess/access_5.log","utf-8");
+        String[] strings = s.split("\\n");
+        ArrayList<String> arrayList = new ArrayList<String>(Arrays.asList(strings));
+        System.out.println(s);
+    }
+    @Test
+    public void testUpdateRegExOnNum() throws Exception {
+        ArrayList<ArrayList<String>> arrayLists = autoGenTemplate.translate(unparsedLogList);
+        String result = autoGenTemplate.concatenate(arrayLists);
+        String s = autoGenTemplate.convertFileToString("/Users/zhouxw/Desktop/webAccess/access_5.log","utf-8");
+        String[] strings = s.split("\\n");
+        ArrayList<String> arrayList = new ArrayList<String>(Arrays.asList(strings));
+        String newRegEx = autoGenTemplate.updateRegExOnNum(result,arrayList);
+        System.out.println(newRegEx);
 
     }
 
